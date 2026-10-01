@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Test 19</title>
+<style>
+  :root {
+    --ink: #1b2a41;
+    --ink-soft: #55627a;
+    --line: #d8dde6;
+    --paper: #ffffff;
+    --field: #f3f5f8;
+    --pitch: #2e7d4f;
+    --pitch-deep: #23603c;
+    --correct: #1e8e5a;
+    --wrong: #c43d3d;
+    --correct-bg: #e6f5ec;
+    --wrong-bg: #fbe9e9;
+    --amber: #b8860b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--field); color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  header {
+    background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 5;
+  }
+  .bar { max-width: 960px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 20px; }
+  .bar .title { font-weight: 600; }
+  .bar .section-name { color: #c6d0e0; }
+  .bar .spacer { flex: 1; }
+
+  main { max-width: 960px; margin: 28px auto 80px; padding: 0 24px; }
+  .sheet { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 32px 40px; }
+  h1 { font-size: 28px; margin: 0 0 6px; font-weight: 700; }
+  h2 { font-size: 22px; margin: 0 0 16px; font-weight: 700; }
+  p.lead { color: var(--ink-soft); margin: 0 0 20px; }
+
+  .instructions ol { padding-left: 22px; }
+  .instructions li { margin-bottom: 6px; }
+  .plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 22px 0 28px; }
+  .plan div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .plan strong { display: block; margin-bottom: 4px; }
+  .plan span { color: var(--ink-soft); font-size: 15px; }
+
+  button.primary {
+    background: var(--pitch); color: #fff; border: 0; border-radius: 6px; font-size: 17px; font-weight: 600;
+    padding: 12px 26px; cursor: pointer; font-family: inherit;
+  }
+  button.primary:hover { background: var(--pitch-deep); }
+  button.primary:focus-visible, .option:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+  /* passage + questions */
+  .two-col { display: grid; grid-template-columns: 5fr 6fr; gap: 40px; align-items: start; }
+  .passage { position: sticky; top: 76px; }
+  .passage-note { margin: 0 0 14px; font-style: italic; color: var(--ink-soft); }
+
+  .question { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+  .question:last-of-type { border-bottom: 0; }
+  .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+  .qnum { font-weight: 700; min-width: 26px; }
+  .stem { margin: 0; }
+  .stem em.speaker { font-style: normal; font-weight: 600; }
+  .stem .facts { margin: 8px 0 0 0; padding-left: 20px; }
+  .stem .facts li { margin: 2px 0; }
+  .stem .quote { margin: 10px 0 0 0; padding: 10px 14px; background: var(--field); border-left: 3px solid var(--line); border-radius: 0 4px 4px 0; }
+  .options { display: grid; gap: 8px; margin: 14px 0 0 38px; }
+  .option {
+    display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .option:hover { border-color: var(--ink-soft); }
+  .option .letter { flex: 0 0 28px; height: 28px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .option.selected { border-color: var(--ink); background: #eef2f8; }
+  .option.selected .letter { background: var(--ink); color: #fff; }
+
+  .submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+  .submit-row .status { color: var(--ink-soft); font-size: 15px; }
+
+
+  /* prose passage */
+  .prose { font-family: Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.6; }
+  .prose h3 { font-family: inherit; font-size: 22px; margin: 0 0 14px; font-weight: 700; }
+  .prose p { margin: 0 0 12px; }
+  .passage { max-height: calc(100vh - 100px); overflow-y: auto; padding-right: 8px; }
+
+
+  /* poem passage */
+  .poem { font-size: 17px; line-height: 1.6; }
+  .poem .stanza { margin: 0 0 18px; position: relative; padding-left: 32px; }
+  .poem .stanza .vn { position: absolute; left: 0; top: 1px; font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px; color: var(--ink-soft); }
+  .poem .stanza .line { display: block; }
+
+
+
+  /* letter-only options and shared option lists */
+  .options.letters { grid-template-columns: repeat(5, 54px); gap: 10px; }
+  .options.letters .option { justify-content: center; padding: 9px; }
+  .choice-list { border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin: 0 0 26px; }
+  .choice-list ol { list-style: none; margin: 0; padding: 0; }
+  .choice-list li { display: flex; gap: 12px; margin-bottom: 8px; }
+  .choice-list li:last-child { margin-bottom: 0; }
+  .choice-list .letter { flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+
+
+  /* multi-extract passage */
+  .extract { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; }
+  .extract h4 { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; margin: 0 0 6px; letter-spacing: .02em; }
+  .extract p { margin: 0; font-size: 16px; line-height: 1.55; }
+  .options.letters.four { grid-template-columns: repeat(4, 54px); }
+
+  /* cloze gaps */
+  .gap { color: var(--ink-soft); }
+  .gap.filled { color: var(--ink); font-weight: 600; background: #eef2f8; box-shadow: inset 0 -2px 0 var(--pitch); }
+  .gap.filled.correct { color: var(--correct); background: var(--correct-bg); box-shadow: inset 0 -2px 0 var(--correct); }
+
+  /* data tables inside stems */
+  table.grid { border-collapse: collapse; margin: 10px 0 0; font-size: 16px; }
+  table.grid th, table.grid td { border: 1px solid var(--ink); padding: 5px 14px; text-align: left; }
+  table.grid th { background: var(--field); font-weight: 600; }
+
+  /* visual (picture) options */
+  .options.visual { grid-template-columns: repeat(auto-fit, minmax(0, max-content)); gap: 14px; }
+  .options.visual .option { flex-direction: column; align-items: center; gap: 8px; padding: 10px; }
+  .options.visual .option .letter { flex: none; width: 28px; height: 28px; }
+  .options.visual .option svg { display: block; }
+  @media (max-width: 760px) { .options.visual { grid-template-columns: repeat(2, max-content); } }
+
+
+  /* v7 additions */
+  .stem .note { margin: 0 0 8px; font-style: italic; color: var(--ink-soft); font-size: 15px; }
+  .stem ol.statements { margin: 10px 0 0; padding-left: 26px; }
+  .stem ol.statements li { margin: 4px 0; padding-left: 4px; }
+  .figure { margin: 12px 0; }
+  .figure svg { display: block; max-width: 100%; height: auto; }
+  .option svg { display: block; max-width: 100%; height: auto; }
+  .option:has(svg) { align-items: center; }
+  .digit-cards { display: flex; gap: 22px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .digit-card { width: 80px; height: 106px; border: 1.5px solid var(--ink); border-radius: 10px; background: #fdf3e1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .digit-card span { font-size: 56px; font-weight: 700; line-height: 1; }
+  .digit-card small { font-size: 12px; margin-top: 6px; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; max-width: 100%; }
+  @media (max-width: 760px) { table.grid th, table.grid td { padding: 4px 8px; font-size: 14px; } }
+  .poem .stanza .line { padding-left: 1.2em; text-indent: -1.2em; }
+  .tags { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .tag { border: 1.5px solid var(--ink); border-radius: 8px 22px 22px 8px; padding: 8px 22px 8px 14px; background: #fdf3e1;
+    display: flex; flex-direction: column; min-width: 96px; }
+  .tag small { font-size: 13px; color: var(--ink-soft); }
+  .tag span { font-size: 22px; font-weight: 700; }
+  .hrow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 22px; margin: 14px 0 16px; }
+  .hnum { display: inline-flex; gap: 3px; }
+  .hnum .dig, .hnum .hid { width: 30px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+    border: 2px solid var(--ink); border-radius: 5px; font-size: 22px; font-weight: 700; background: #fff; }
+  .hnum .hid { background: var(--ink); color: #fff; font-size: 18px; }
+  .hnum .hid.sq { color: #f2c14e; }
+  .hnum .hid.tri { color: #8fd3c7; }
+  .explain .skill { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+
+  /* review */
+  .result-line { display: flex; gap: 10px; align-items: center; font-weight: 600; margin-bottom: 10px; }
+  .badge { padding: 2px 10px; border-radius: 4px; font-size: 14px; }
+  .badge.ok { background: var(--correct-bg); color: var(--correct); }
+  .badge.no { background: var(--wrong-bg); color: var(--wrong); }
+  .option.is-correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option.is-correct .letter { border-color: var(--correct); background: var(--correct); color: #fff; }
+  .option.is-wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option.is-wrong .letter { border-color: var(--wrong); background: var(--wrong); color: #fff; }
+  .option[disabled] { cursor: default; }
+  .explain { margin: 14px 0 0 38px; padding: 14px 16px; background: var(--field); border-radius: 6px; font-size: 16px; }
+  .explain p { margin: 0 0 8px; }
+  .explain p:last-child { margin: 0; }
+  .explain .why-not { color: var(--ink-soft); }
+
+  .section-score { font-size: 18px; margin: 0 0 24px; }
+  .section-score b { font-size: 26px; }
+
+  /* final */
+  .final-score { text-align: center; padding: 20px 0 10px; }
+  .final-score .big { font-size: 64px; font-weight: 700; line-height: 1; }
+  .final-score .of { color: var(--ink-soft); font-size: 20px; }
+  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 26px 0 30px; }
+  .breakdown div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .breakdown strong { display: block; font-size: 24px; }
+  .breakdown span { color: var(--ink-soft); font-size: 15px; }
+  .verdict { margin: 0 0 24px; }
+  .center { text-align: center; }
+
+  @media (max-width: 760px) {
+    .two-col { grid-template-columns: 1fr; }
+    .passage { position: static; }
+    .plan, .breakdown { grid-template-columns: 1fr; }
+    .sheet { padding: 22px; }
+    .options, .explain { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .option { transition: background .12s, border-color .12s; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <span class="title">Practice Test 19</span>
+    <span class="section-name" id="hdr-section"></span>
+    <span class="spacer"></span>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* ---------------------------------------------------------------
+   TEST CONTENT — Practice Test 19
+   --------------------------------------------------------------- */
+
+let passMode = "answer";
+const INK = "#1b2a41";
+
+/* ---- Reading: four extracts on one theme ---- */
+const EXTRACTS = [
+  `Every spring, some Australian magpies begin swooping at people who walk or ride past their nests. The birds are not being nasty: they are protecting their eggs and chicks. Most of the swooping birds are males, and once the chicks are old enough to leave the area, the swooping stops.`,
+  `For ten minutes Sam stared up at the broken branch in the gum tree, wondering why Dad had told him to look so carefully. It was grey, streaky and completely still. Then, very slowly, the branch opened one yellow eye. Sam nearly dropped his binoculars. It was a tawny frogmouth, and it had been watching him the whole time.`,
+  `To make a simple bird bath, place a shallow dish of water in a shady spot. Raise it up off the ground so that cats cannot sneak up on the birds while they drink. Change the water every day or two, and give the dish a good scrub each week.`,
+  `In my opinion, there is no sound more Australian than a kookaburra’s laugh. Every morning, before the sun is properly up, the family of kookaburras in the gum tree outside my window starts to cackle. I would not swap that alarm clock for any other in the world.`
+];
+const PASSAGE = {
+  title: "Birds",
+  note: "Read the four extracts below about Australian birds.",
+  html: EXTRACTS.map((t, i) => `<div class="extract"><h4>Extract ${"ABCD"[i]}</h4><p>${t}</p></div>`).join("")
+};
+
+/* ---- Thinking Skills Q3: mirror ---- */
+const MIRROR_SHAPE = [[0,0],[1,0],[1,1],[1,2],[2,2],[3,2],[3,3]];
+function gridSVG(cells, u = 24) {
+  let g = "";
+  for (let i = 0; i <= 4; i++) {
+    g += `<line x1="0" y1="${i * u}" x2="${4 * u}" y2="${i * u}" stroke="#c9d1dc" stroke-width="1"/>`;
+    g += `<line x1="${i * u}" y1="0" x2="${i * u}" y2="${4 * u}" stroke="#c9d1dc" stroke-width="1"/>`;
+  }
+  cells.forEach(([r, c]) => g += `<rect x="${c * u}" y="${r * u}" width="${u}" height="${u}" fill="#5b7db1" stroke="${INK}" stroke-width="1.2"/>`);
+  return g;
+}
+const MIRROR_SVG = (() => {
+  const u = 26;
+  return `<svg viewBox="-3 -3 ${4 * u + 50} ${4 * u + 30}" width="${4 * u + 50}" height="${4 * u + 30}" role="img" aria-label="A shape of seven shaded squares on a 4 by 4 grid, with a dashed mirror line down its right-hand side.">
+    ${gridSVG(MIRROR_SHAPE, u)}
+    <line x1="${4 * u + 16}" y1="-3" x2="${4 * u + 16}" y2="${4 * u + 6}" stroke="${INK}" stroke-width="2.5" stroke-dasharray="7 5"/>
+    <text x="${4 * u + 16}" y="${4 * u + 24}" font-size="13" text-anchor="middle" fill="${INK}">mirror</text></svg>`;
+})();
+const mirrorOpt = (cells, label) => `<svg viewBox="-3 -3 102 102" width="102" height="102" role="img" aria-label="${label}">${gridSVG(cells, 24)}</svg>`;
+const MIRROR_OPTS = [
+  mirrorOpt(MIRROR_SHAPE.map(([r, c]) => [3 - r, 3 - c]), "Option A"),   // half turn
+  mirrorOpt(MIRROR_SHAPE, "Option B"),                                    // unchanged
+  mirrorOpt(MIRROR_SHAPE.map(([r, c]) => [3 - r, c]), "Option C"),       // upside down
+  mirrorOpt(MIRROR_SHAPE.map(([r, c]) => [r, 3 - c]), "Option D")        // correct reflection
+];
+
+/* ---- Maths Q1: bar graph ---- */
+const BOOKS = [["Ava", 14], ["Ben", 8], ["Cal", 18], ["Dee", 12], ["Eli", 6]];
+const GRAPH_SVG = (() => {
+  const ox = 46, oy = 20, h = 200, unit = h / 20, bw = 36, gap = 22;
+  let g = "";
+  for (let v = 0; v <= 20; v += 2) {
+    const y = oy + h - v * unit;
+    g += `<line x1="${ox}" y1="${y}" x2="${ox + BOOKS.length * (bw + gap) + 10}" y2="${y}" stroke="${v % 4 === 0 ? "#c9d1dc" : "#e6eaf0"}" stroke-width="1"/>`;
+    if (v % 4 === 0) g += `<text x="${ox - 8}" y="${y + 5}" font-size="13" text-anchor="end" fill="${INK}">${v}</text>`;
+  }
+  BOOKS.forEach(([n, v], i) => {
+    const x = ox + 14 + i * (bw + gap);
+    g += `<rect x="${x}" y="${oy + h - v * unit}" width="${bw}" height="${v * unit}" fill="#5b7db1"/>
+          <text x="${x + bw / 2}" y="${oy + h + 20}" font-size="14" text-anchor="middle" fill="${INK}">${n}</text>`;
+  });
+  g += `<line x1="${ox}" y1="${oy}" x2="${ox}" y2="${oy + h}" stroke="${INK}" stroke-width="1.5"/>
+        <line x1="${ox}" y1="${oy + h}" x2="${ox + BOOKS.length * (bw + gap) + 10}" y2="${oy + h}" stroke="${INK}" stroke-width="1.5"/>
+        <text x="14" y="${oy + h / 2}" font-size="13" text-anchor="middle" fill="${INK}" transform="rotate(-90 14 ${oy + h / 2})">Books read</text>`;
+  return `<svg viewBox="0 0 ${ox + BOOKS.length * (bw + gap) + 20} ${oy + h + 34}" width="${ox + BOOKS.length * (bw + gap) + 20}" height="${oy + h + 34}" role="img" aria-label="Bar graph of books read. The scale goes up in 4s with faint lines every 2. Ava 14, Ben 8, Cal 18, Dee 12, Eli 6.">${g}</svg>`;
+})();
+
+/* ---- Maths Q3: area on a grid ---- */
+const AREA_SVG = (() => {
+  const u = 36, pts = [[1,1],[3,1],[4,2],[4,4],[0,4],[0,2]];
+  let g = "";
+  for (let i = 0; i <= 4; i++) {
+    g += `<line x1="0" y1="${i * u}" x2="${4 * u}" y2="${i * u}" stroke="#c9d1dc" stroke-width="1"/>`;
+    g += `<line x1="${i * u}" y1="0" x2="${i * u}" y2="${4 * u}" stroke="#c9d1dc" stroke-width="1"/>`;
+  }
+  g += `<polygon points="${pts.map(([x, y]) => `${x * u},${y * u}`).join(" ")}" fill="rgba(91,125,177,.55)" stroke="${INK}" stroke-width="2.2"/>`;
+  return `<svg viewBox="-3 -3 ${4 * u + 6} ${4 * u + 6}" width="${4 * u + 6}" height="${4 * u + 6}" role="img" aria-label="A shaded shape on a 4 by 4 grid of squares. The bottom two rows are fully shaded. In the second row, the two middle squares are shaded and the two end squares are each half shaded, cut by a diagonal.">${g}</svg>`;
+})();
+
+const SECTIONS = [
+  {
+    id: "reading",
+    name: "Reading",
+    passage: PASSAGE,
+    intro: "Read the four extracts about Australian birds. For each question, choose the extract (A, B, C or D) which best answers it.",
+    questions: [
+      {
+        stem: "In which extract is a character surprised?",
+        letterOptions: true,
+        options: ["Extract A", "Extract B", "Extract C", "Extract D"],
+        answer: 1,
+        skill: "matching a question to the right text",
+        explain: `<p>In Extract B, Sam thinks he is looking at a broken branch, until “the branch opened one yellow eye”. He “nearly dropped his binoculars”, which shows how surprised he is.</p>
+                  <p class="why-not">Extract A is about people being swooped, which might be startling, but it is an information text that describes what magpies do, not a story about a character. Extracts C and D have no surprises in them.</p>`
+      },
+      {
+        stem: "Which extract explains why a bird does something that people may not like?",
+        letterOptions: true,
+        options: ["Extract A", "Extract B", "Extract C", "Extract D"],
+        answer: 0,
+        skill: "finding an explanation in a text",
+        explain: `<p>Extract A says magpies swoop at people, which nobody enjoys, and then explains why: “they are protecting their eggs and chicks.”</p>
+                  <p class="why-not">Extract D is the trap. Kookaburras laughing before sunrise might annoy some people, but the writer <em>likes</em> it, and the extract never explains why the birds do it. Extract C explains why you should raise the bird bath, but that is about cats, not about something a bird does.</p>`
+      },
+      {
+        stem: "Which extract mainly tells the reader how to do something?",
+        letterOptions: true,
+        options: ["Extract A", "Extract B", "Extract C", "Extract D"],
+        answer: 2,
+        skill: "recognising the type and purpose of a text",
+        explain: `<p>Extract C is a set of instructions. It tells you how to make a bird bath: place a shallow dish of water in the shade, raise it up, and change and scrub it regularly. Words like “place”, “raise” and “change” give orders, which is what instructions do.</p>
+                  <p class="why-not">Extract A gives information about magpies, Extract B tells a story, and Extract D gives the writer’s opinion. None of them tells the reader how to do anything.</p>`
+      }
+    ]
+  },
+  {
+    id: "thinking",
+    name: "Thinking Skills",
+    intro: "Choose the one correct answer (A, B, C or D).",
+    questions: [
+      {
+        stem: `<p class="quote" style="margin-top:0"><em class="speaker">Noah:</em> “I ate porridge for breakfast and then got 10 out of 10 in my spelling test. So eating porridge makes you good at spelling!”</p>
+               <p style="margin:10px 0 0">Which one of these sentences shows the mistake Noah has made?</p>`,
+        options: ["Noah may not enjoy porridge as much as he enjoys toast.",
+                  "Noah may have done well because he had practised hard.",
+                  "The next spelling test may have more than ten words in it.",
+                  "Porridge may be a healthy breakfast choice for children."],
+        answer: 1,
+        skill: "spotting a flaw in reasoning",
+        explain: `<p>Two things happening one after the other doesn’t mean the first one <em>caused</em> the second. Noah got full marks after eating porridge, but there could be a much better reason, like practising his spelling words. B points this out.</p>
+                  <p class="why-not">D is the trap. It is about porridge, and it might be true, but being healthy doesn’t show that porridge improves spelling. A and C have nothing to do with whether porridge helped.</p>`
+      },
+      {
+        stem: `In a secret code, the word <b>CAT</b> is written as <b>DBU</b>.
+               <p style="margin:10px 0 0">How would the word <b>DOG</b> be written in the same code?</p>`,
+        options: ["CNF", "FQI", "EPH", "EOH"],
+        answer: 2,
+        skill: "working out a code",
+        explain: `<p>Compare each letter with its code letter. C becomes D, A becomes B, and T becomes U. Each letter moves <b>one place forward</b> in the alphabet. So D becomes E, O becomes P, and G becomes H, which gives <b>EPH</b>.</p>
+                  <p class="why-not">CNF (A) moves each letter one place <em>back</em> instead of forward. FQI (B) moves each letter two places. EOH (D) forgets to change the middle letter.</p>`
+      },
+      {
+        stem: `This shape is reflected in the mirror line.
+               <div class="figure">${MIRROR_SVG}</div>
+               <p style="margin:0">Which of these shows its reflection?</p>`,
+        visualOptions: true,
+        options: MIRROR_OPTS,
+        answer: 3,
+        skill: "reflecting a shape in a mirror line",
+        explain: `<p>A mirror line down the side flips the shape from left to right, but nothing moves up or down. The square at the top-left corner ends up at the top-right corner, and the bottom row still sticks out at the bottom, now to the left. That is D.</p>
+                  <p class="why-not">B is the trap: it is the same shape, not flipped at all. C has been flipped upside down instead of left to right. A has been turned upside down (a half turn), which is not a reflection.</p>`
+      }
+    ]
+  },
+  {
+    id: "maths",
+    name: "Mathematical Reasoning",
+    intro: "Choose the one correct answer (A, B, C, D or E). No calculators.",
+    questions: [
+      {
+        stem: `The graph shows how many books five students read during the holidays.
+               <div class="figure">${GRAPH_SVG}</div>
+               <p style="margin:10px 0 0">How many more books did the student who read the most read than the student who read the fewest?</p>`,
+        options: ["6", "10", "12", "18", "24"],
+        answer: 2,
+        skill: "reading a bar graph scale",
+        explain: `<p>The scale goes up in 4s, with a faint line halfway between each number, so each faint line is worth 2. Cal read the most: <b>18</b>. Eli read the fewest: <b>6</b>. 18 − 6 = <b>12</b>.</p>
+                  <p class="why-not">10 (B) is the trap: it uses Ben (8), who has the second-shortest bar, instead of Eli (6). 6 (A) counts lines as if each one were worth 1. 18 (D) is just Cal’s number. 24 (E) adds the two numbers instead of finding the difference.</p>`
+      },
+      {
+        stem: `Pens cost $3 each, or $10 for a pack of 4.
+               <p style="margin:10px 0 0">Ella needs 9 pens. What is the least she can pay?</p>`,
+        options: ["$22.50", "$23", "$25", "$27", "$30"],
+        answer: 1,
+        skill: "finding the cheapest combination",
+        explain: `<p>Packs are cheaper: 4 pens in a pack cost $10, but 4 single pens cost $12. Two packs give 8 pens for $20, then one more single pen costs $3. That makes 9 pens for <b>$23</b>.</p>
+                  <p class="why-not">$22.50 (A) is the trap: it works out $2.50 a pen from the packs and multiplies by 9, but you can’t buy a quarter of a pack. $27 (D) buys 9 single pens. $25 (C) buys only one pack and 5 singles. $30 (E) buys three packs, which is 12 pens and more than she needs.</p>`
+      },
+      {
+        stem: `Each small square on the grid has an area of 1 square centimetre.
+               <div class="figure">${AREA_SVG}</div>
+               <p style="margin:10px 0 0">What is the area of the shaded shape?</p>`,
+        options: ["8 cm²", "10 cm²", "11 cm²", "12 cm²", "16 cm²"],
+        answer: 2,
+        skill: "finding area by counting squares and half squares",
+        explain: `<p>Count the whole squares: 8 in the bottom two rows and 2 in the middle of the row above, which makes 10. The two squares at the ends of that row are cut in half by a diagonal, and two halves make one whole. 10 + 1 = <b>11 cm²</b>.</p>
+                  <p class="why-not">12 (D) is the trap: it counts each half square as a whole square. 10 (B) leaves out the half squares. 8 (A) only counts the bottom two rows. 16 (E) is the whole grid.</p>`
+      }
+    ]
+  }
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const app = document.getElementById("app");
+const hdrSection = document.getElementById("hdr-section");
+let responses = SECTIONS.map(s => s.questions.map(() => null));
+let current = 0;
+
+function showStart() {
+  hdrSection.textContent = "";
+  app.innerHTML = `
+    <div class="sheet instructions">
+      <h1>Practice paper 19</h1>
+      <p class="lead">Three short sections: reading, thinking skills and maths.</p>
+      <div class="plan">
+        ${SECTIONS.map(s => `<div><strong>${s.name}</strong><span>${s.questions.length} questions</span></div>`).join("")}
+      </div>
+      <ol>
+        <li>Take as long as you need — there is no time limit.</li>
+        <li>Answer all three questions in a section, then press <strong>Submit answers</strong> to see how you went.</li>
+        <li>You don’t lose marks for wrong answers, so attempt every question.</li>
+        <li>Your overall mark out of 9 is shown at the end.</li>
+      </ol>
+      <button class="primary" id="start">Start the reading section</button>
+    </div>`;
+  document.getElementById("start").onclick = () => { current = 0; responses = SECTIONS.map(s => s.questions.map(() => null)); showSection(); };
+}
+
+function renderPassage(pass) {
+  return `<div class="passage">
+    <p class="passage-note">${pass.note}</p>
+    <div class="prose"><h3>${pass.title}</h3><div id="passage-body">${typeof pass.html === "function" ? pass.html() : pass.html}</div></div>
+  </div>`;
+}
+
+function refreshPassage() {
+  const pass = SECTIONS[current].passage;
+  const el = document.getElementById("passage-body");
+  if (el && pass && typeof pass.html === "function") el.innerHTML = pass.html();
+}
+
+function renderQuestions(section, mode) {
+  return section.questions.map((q, qi) => {
+    const chosen = responses[current][qi];
+    const opts = q.options.map((o, oi) => {
+      let cls = "option";
+      if (mode === "answer" && chosen === oi) cls += " selected";
+      if (mode === "review") {
+        if (oi === q.answer) cls += " is-correct";
+        else if (chosen === oi) cls += " is-wrong";
+      }
+      return `<button type="button" class="${cls}" data-q="${qi}" data-o="${oi}" ${mode === "review" ? "disabled" : ""}>
+                <span class="letter">${LETTERS[oi]}</span>${q.letterOptions ? "" : `<span>${o}</span>`}</button>`;
+    }).join("");
+    const optCls = q.visualOptions ? "options visual" : (q.letterOptions ? "options letters" : "options");
+    let result = "";
+    if (mode === "review") {
+      const right = chosen === q.answer;
+      const label = chosen === null ? "Not answered" : (right ? "Correct" : "Incorrect");
+      result = `<div class="result-line"><span class="badge ${right ? "ok" : "no"}">${label}</span>
+                <span>Correct answer: ${LETTERS[q.answer]}${chosen !== null && !right ? ` · You chose ${LETTERS[chosen]}` : ""}</span></div>`;
+    }
+    return `<div class="question">
+      <div class="qhead"><span class="qnum">${qi + 1}</span><div class="stem">${q.stem}</div></div>
+      ${result}
+      <div class="${optCls}">${opts}</div>
+      ${mode === "review" ? `<div class="explain">${q.skill ? `<p class="skill">Skill tested: ${q.skill}</p>` : ""}${q.explain}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function showSection() {
+  passMode = "answer";
+  const s = SECTIONS[current];
+  hdrSection.textContent = `${s.name} · Section ${current + 1} of ${SECTIONS.length}`;
+  const qs = `<div>
+      <h2>${s.name}</h2>
+      <p class="lead">${s.intro}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "answer")}
+      <div class="submit-row">
+        <button class="primary" id="submit">Submit answers</button>
+        <span class="status" id="status"></span>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${qs}</div>` : qs}</div>`;
+
+  app.querySelectorAll(".option").forEach(btn => {
+    btn.onclick = () => {
+      const qi = +btn.dataset.q, oi = +btn.dataset.o;
+      responses[current][qi] = oi;
+      app.querySelectorAll(`.option[data-q="${qi}"]`).forEach(b => b.classList.toggle("selected", +b.dataset.o === oi));
+      refreshPassage();
+      updateStatus();
+    };
+  });
+  document.getElementById("submit").onclick = () => {
+    const unanswered = responses[current].filter(r => r === null).length;
+    if (unanswered && !confirm(`You have ${unanswered} unanswered question${unanswered > 1 ? "s" : ""}. Submit anyway?`)) return;
+    showReview();
+  };
+  updateStatus();
+  window.scrollTo(0, 0);
+}
+
+function updateStatus() {
+  const done = responses[current].filter(r => r !== null).length;
+  const el = document.getElementById("status");
+  if (el) el.textContent = `${done} of ${SECTIONS[current].questions.length} answered`;
+}
+
+function sectionScore(i) {
+  return SECTIONS[i].questions.reduce((n, q, qi) => n + (responses[i][qi] === q.answer ? 1 : 0), 0);
+}
+
+function showReview() {
+  passMode = "review";
+  const s = SECTIONS[current];
+  const score = sectionScore(current);
+  const last = current === SECTIONS.length - 1;
+  hdrSection.textContent = `${s.name} · Review`;
+  const body = `<div>
+      <h2>${s.name} — review</h2>
+      <p class="section-score">You scored <b>${score}</b> out of ${s.questions.length}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "review")}
+      <div class="submit-row">
+        <button class="primary" id="next">${last ? "See your overall mark" : `Start the ${SECTIONS[current + 1].name.split(" — ")[0].toLowerCase()} section`}</button>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${body}</div>` : body}</div>`;
+  document.getElementById("next").onclick = () => { if (last) showFinal(); else { current++; showSection(); } };
+  window.scrollTo(0, 0);
+}
+
+function showFinal() {
+  hdrSection.textContent = "Results";
+  const total = SECTIONS.reduce((n, _, i) => n + sectionScore(i), 0);
+  const max = SECTIONS.reduce((n, s) => n + s.questions.length, 0);
+  let verdict;
+  if (total === max) verdict = "Full marks. Every question right, across all three sections.";
+  else if (total >= 7) verdict = "A strong result. Look back at the questions you missed — the explanations show exactly where the trap was.";
+  else if (total >= 5) verdict = "A solid attempt. The sections where you dropped marks are the ones to practise next.";
+  else verdict = "A good start. Re-read the explanations for each section, then try the paper again.";
+  app.innerHTML = `
+    <div class="sheet">
+      <div class="final-score"><div class="big">${total}</div><div class="of">out of ${max}</div></div>
+      <div class="breakdown">
+        ${SECTIONS.map((s, i) => `<div><strong>${sectionScore(i)} / ${s.questions.length}</strong><span>${s.name}</span></div>`).join("")}
+      </div>
+      <p class="verdict center">${verdict}</p>
+      <div class="center"><button class="primary" id="again">Try the paper again</button></div>
+    </div>`;
+  document.getElementById("again").onclick = showStart;
+  window.scrollTo(0, 0);
+}
+
+
+showStart();
+</script>
+</body>
+</html>
